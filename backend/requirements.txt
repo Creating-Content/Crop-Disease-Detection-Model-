@@ -4,5 +4,6 @@ torch
 torchvision
 Pillow
 numpy
-opencv-python-headless # Use headless for server environments to avoid GUI dependencies
+opencv-python-headless
 requests
+gunicorn
