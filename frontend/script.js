@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const medicinesOutput = document.getElementById('medicinesOutput');
     const medicinesTextSpan = document.getElementById('medicinesText');
 
-    // Reference to the new inline loading status element
     const analysisStatusDiv = document.getElementById('analysisStatus'); 
 
     const messageBox = document.getElementById('messageBox');
@@ -48,21 +47,61 @@ document.addEventListener('DOMContentLoaded', () => {
         analysisStatusDiv.style.display = show ? 'flex' : 'none'; 
     }
 
+    // --- Function to resize and convert image to base64 ---
+    function resizeAndEncodeImage(file, maxWidth, maxHeight, quality, callback) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+
+                // Calculate new dimensions to fit within maxWidth/maxHeight
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert canvas content to base64 with specified quality
+                const resizedBase64 = canvas.toDataURL('image/jpeg', quality);
+                callback(resizedBase64);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
     // --- Image Upload Event Listener ---
     imageUploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                uploadedImageElem.src = e.target.result;
+            // Reset UI
+            uploadedImageElem.src = '#';
+            uploadedImageElem.style.display = 'none';
+            predictionOutput.style.display = 'none';
+            segmentedImageCard.style.display = 'none';
+            precautionsOutput.style.display = 'none';
+            medicinesOutput.style.display = 'none';
+            
+            // Resize and encode the image
+            resizeAndEncodeImage(file, 1024, 1024, 0.8, (resizedBase64) => {
+                uploadedImageElem.src = resizedBase64;
                 uploadedImageElem.style.display = 'block';
-                base64Image = e.target.result;
-                predictionOutput.style.display = 'none';
-                segmentedImageCard.style.display = 'none';
-                precautionsOutput.style.display = 'none';
-                medicinesOutput.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
+                base64Image = resizedBase64; // Store the resized base64 image
+            });
         } else {
             uploadedImageElem.src = '#';
             uploadedImageElem.style.display = 'none';
@@ -72,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Recommend Crops Button Event Listener ---
     recommendCropsBtn.addEventListener('click', async () => {
-        toggleLoading(true); // Still uses the general toggleLoading, but it's okay for now.
+        toggleLoading(true);
         cropRecommendationOutput.style.display = 'block';
         cropListSpan.textContent = 'Fetching recommendations...';
 
@@ -88,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            // Use relative path for fetch call, as Flask now serves frontend and backend
             const response = await fetch('/recommend_crops', {
                 method: 'POST',
                 headers: {
@@ -126,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        toggleLoading(true); // Show the inline analysis status
+        toggleLoading(true);
         
         // Reset previous outputs
         predictionOutput.style.display = 'none';
@@ -143,11 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
             npk_p: parseFloat(npkPInput.value),
             npk_k: parseFloat(npkKInput.value),
             rain_status: rainStatusSelect.value,
-            image: base64Image
+            image: base64Image // This is now the resized/compressed base64 image
         };
 
         try {
-            // Use relative path for fetch call, as Flask now serves frontend and backend
             const response = await fetch('/analyze_plant', {
                 method: 'POST',
                 headers: {
@@ -205,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error analyzing plant:', error);
             showMessage(`Error analyzing plant: ${error.message}`);
         } finally {
-            toggleLoading(false); // Hide the inline analysis status
+            toggleLoading(false);
         }
     });
 });
