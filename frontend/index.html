@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Detector & Crop Recommender</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Inter font for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <a href="#home"><i class="fas fa-home"></i> Home</a>
+        <a href="#about"><i class="fas fa-info-circle"></i> About</a>
+        <a href="#predict-section"><i class="fas fa-flask"></i> Predict Disease</a>
+        <a href="#query-section"><i class="fas fa-search-location"></i> Crop Query</a>
+        <a href="#contact-section"><i class="fas fa-envelope"></i> Contact Us</a>
+    </nav>
+
+    <div class="container">
+        <!-- Home Section -->
+        <div id="home">
+            <h1 class="header-title"><i class="fas fa-leaf"></i> Plant Disease Detection & Remedies</h1>
+        </div>
+
+        <!-- About Section -->
+        <div class="card" id="about">
+            <h2><i class="fas fa-book"></i> About This Application</h2>
+            <p>This application is designed to assist farmers and gardeners in identifying plant diseases and recommending suitable crops based on environmental conditions. By leveraging advanced AI models for image analysis and environmental data processing, it provides insights into plant health and offers practical solutions.</p>
+            <p>Our goal is to empower users with quick and accurate information, helping them to maintain healthier crops and optimize their agricultural practices. Upload an image of your plant to get an instant diagnosis, or input your local environmental data to discover the best crops for your region.</p>
+        </div>
+
+        <!-- Crop Query Section -->
+        <div class="card environmental-inputs" id="query-section">
+            <h2><i class="fas fa-seedling"></i> Environmental Conditions for Crop Query</h2>
+            <div class="input-grid">
+                <label>Temperature (°C): <input type="number" id="temperature" value="25.0" step="0.1" min="0" max="100"></label>
+                <label>Humidity (%): <input type="number" id="humidity" value="65.0" step="0.1" min="0" max="100"></label>
+                <label>Soil pH: <input type="number" id="soil_ph" value="6.5" step="0.1" min="0" max="14"></label>
+                <label>Light Intensity (Lux): <input type="number" id="light_intensity" value="10000.0" step="100" min="0"></label>
+                <label>Nitrogen (N %): <input type="number" id="npk_n" value="10.0" step="0.1" min="0" max="100"></label>
+                <label>Phosphorus (P %): <input type="number" id="npk_p" value="5.0" step="0.1" min="0" max="100"></label>
+                <label>Potassium (K %): <input type="number" id="npk_k" value="15.0" step="0.1" min="0" max="100"></label>
+                <label>Rain Status: 
+                    <select id="rain_status">
+                        <option value="0">No Rain</option>
+                        <option value="1">Raining/Recently Rained</option>
+                    </select>
+                </label>
+            </div>
+            <button id="recommendCropsBtn" class="btn primary-btn"><i class="fas fa-tractor"></i> Recommend Crops</button>
+        </div>
+
+        <div class="output-box" id="cropRecommendationOutput">
+            <strong>Recommended Crops:</strong><br>
+            <span id="cropList">No recommendations yet.</span>
+        </div>
+
+        <!-- Predict Disease Section -->
+        <div class="card image-upload-section" id="predict-section">
+            <h2><i class="fas fa-camera"></i> Upload Plant Image for Disease Prediction</h2>
+            <input type="file" id="imageUpload" accept="image/*">
+            <div class="image-preview" id="imagePreview">
+                <img id="uploadedImage" src="#" alt="Uploaded Image" style="display: none;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-top: 20px;">
+                <button id="analyzeImageBtn" class="btn primary-btn"><i class="fas fa-flask"></i> Analyze Image</button>
+                <div id="analysisStatus" class="analysis-status" style="display: none;">
+                    <div class="small-spinner"></div>
+                    <span class="status-text">Analyzing...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="output-sections">
+            <div class="output-card prediction-card" id="predictionOutput" style="display: none;">
+                <strong><i class="fas fa-brain"></i> AI Prediction:</strong><br>
+                <span id="diseaseName"></span><br>
+                Confidence: <span id="confidence"></span>%
+            </div>
+
+            <div class="output-card segmented-image-card" id="segmentedImageCard" style="display: none;">
+                <strong><i class="fas fa-leaf"></i> Segmented Disease Region:</strong><br>
+                <img id="segmentedImage" src="#" alt="Segmented Image">
+            </div>
+
+            <div class="output-card remedy-box" id="precautionsOutput" style="display: none;">
+                <strong><i class="fas fa-shield-alt"></i> Precautions:</strong><br>
+                <span id="precautionsText"></span>
+            </div>
+
+            <div class="output-card medicine-box" id="medicinesOutput" style="display: none;">
+                <strong><i class="fas fa-pills"></i> Medicines:</strong><br>
+                <span id="medicinesText"></span>
+            </div>
+        </div>
+
+        <!-- Contact Us Section -->
+        <div class="card contact-section" id="contact-section">
+            <h2><i class="fas fa-headset"></i> Contact Us</h2>
+            <p>If you have any questions, feedback, or need support regarding the Plant Disease Detector & Crop Recommender, please don't hesitate to reach out.</p>
+            <p>You can contact us via email at: <strong><a href="mailto:support@plantapp.com">support@plantapp.com</a></strong></p>
+            <p>We aim to respond to all inquiries within 24-48 business hours.</p>
+            <div class="social-links">
+                <a href="#" target="_blank" title="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" target="_blank" title="Connect on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" target="_blank" title="Check our GitHub"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+
+        <div id="messageBox" class="message-box" style="display: none;">
+            <p id="messageText"></p>
+            <button onclick="document.getElementById('messageBox').style.display='none'">Close</button>
+        </div>
+
+    </div>
+    
+    <script src="script.js"></script>
+
+    <!-- Footer for copyright information -->
+    <footer class="app-footer">
+        <p>&copy; 2025 Plant Disease Detector & Crop Recommender. All rights reserved.</p>
+        <p>Disclaimer: This application provides AI-generated insights and recommendations for informational purposes only. Consult with agricultural experts for precise advice.</p>
+    </footer>
+</body>
+</html>
